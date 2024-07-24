@@ -1,0 +1,139 @@
+[tool.poetry]
+name = "geo-events"
+version = "0.1.0"
+description = ""
+authors = ["MegaloCla <pivaclaudio23@gmail.com>"]
+readme = "README.md"
+license = "GPL3"
+include = ["LICENSE"]
+
+packages = [
+    { include = "geo_events", from = "src" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+requests = "^2.32.3"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.3.1"
+pytest-cov = "^5.0.0"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.5.4"
+mypy = "^1.11.0"
+pre-commit = "^3.7.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = """
+--doctest-modules \
+--cov=./ \
+--cov-append \
+--cov-report html:tests/reports/coverage-html \
+--cov-report xml:tests/reports/coverage.xml \
+--ignore=docs/
+"""
+testpaths = [
+    "tests",
+]
+
+[tool.ruff]
+lint.select = [
+    "A", # Builtins
+    "ANN", # Annotations
+    "ARG", # Unused arguments
+    "B", # Bugbear
+    "BLE", # Blind except
+    "C4", # Comprehensions
+    "C90", # mccabe
+    "COM", # Commas
+    "D2", # Docstring conventions
+    "D3", # Triple double quotes
+    "D4", # Docstring text format
+    "DTZ", # Datetimes
+    "EM", # Error messages
+    "ERA", # Commented-out code
+    "EXE", # Executable
+    "F", # Pyflakes
+    "FA", # __future__ annotations
+    "FLY", # F-strings
+    # "FURB", # Refurb
+    "G", # Logging format
+    "I", # Isort
+    "ICN", # Import conventions
+    "INP", # Disallow PEP-420 (Implicit namespace packages)
+    "INT", # gettext
+    "ISC", # Implicit str concat
+    # "LOG",  # Logging
+    "N", # PEP-8 Naming
+    "NPY", # Numpy
+    "PERF", # Unnecessary performance costs
+    "PGH", # Pygrep hooks
+    "PIE", # Unnecessary code
+    "PL", # Pylint
+    "PT", # Pytest
+    "PTH", # Use Pathlib
+    "PYI", # Stub files
+    "Q", # Quotes
+    "RET", # Return
+    "RUF", # Ruff
+    "RSE", # Raise
+    "S", # Bandit
+    "SIM", # Code simplification
+    "SLF", # Private member access
+    "SLOT", # __slots__
+    "T10", # Debugger
+    "T20", # Print
+    "TCH", # Type checking
+    "TID", # Tidy imports
+    "TRY", # Exception handling
+    "UP", # Pyupgrade
+    "W", # Warnings
+    "YTT", # sys.version
+]
+lint.ignore = [
+    "D203", # One blank line before class docstring
+    "D212", # Multi-line summary first line
+    "PLR0913", # Too many arguments
+    "Q000", # Single quotes found but double quotes preferred
+    "COM812",
+    "ISC001",
+    "D206",
+    "W191"
+]
+# preview = true
+show-fixes = true
+src = ["src", ]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "tab"
+docstring-code-format = true
+docstring-code-line-length = 30
+
+[tool.coverage.run]
+branch = true
+relative_files = true
+omit = [
+    "tests/*",
+]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_no_return = true
+
+# Specifying directories to check
+files = ["src", "tests"]
