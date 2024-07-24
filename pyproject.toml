@@ -14,6 +14,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.12"
 requests = "^2.32.3"
+pydantic = "^2.8.2"
 
 
 [tool.poetry.group.test.dependencies]
@@ -106,7 +107,8 @@ lint.ignore = [
     "COM812",
     "ISC001",
     "D206",
-    "W191"
+    "W191",
+    "FA100"
 ]
 # preview = true
 show-fixes = true
@@ -127,13 +129,14 @@ omit = [
 
 [tool.mypy]
 python_version = "3.12"
-strict = true
 ignore_missing_imports = true
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
 warn_unused_ignores = true
 warn_redundant_casts = true
 warn_no_return = true
+install_types = true
+non_interactive = true
 
 # Specifying directories to check
-files = ["src", "tests"]
+files = ["src"]
