@@ -1,16 +1,4 @@
 repos:
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.0
-    hooks:
-      - id: mypy
-        args: [ "--config-file=pyproject.toml" ]
-
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.5.4
-    hooks:
-      - id: ruff
-        args: [ "--config=pyproject.toml" ]
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -24,3 +12,16 @@ repos:
     hooks:
       - id: python-check-blanket-noqa
       - id: python-no-log-warn
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.5.4
+    hooks:
+      - id: ruff
+        args: [ "--config=pyproject.toml" ]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.0
+    hooks:
+      - id: mypy
+        args: [ "--config-file=pyproject.toml" ]

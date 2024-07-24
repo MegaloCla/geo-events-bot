@@ -45,7 +45,7 @@ testpaths = [
 ]
 
 [tool.ruff]
-select = [
+lint.select = [
     "A", # Builtins
     "ANN", # Annotations
     "ARG", # Unused arguments
@@ -98,19 +98,22 @@ select = [
     "W", # Warnings
     "YTT", # sys.version
 ]
-ignore = [
+lint.ignore = [
     "D203", # One blank line before class docstring
     "D212", # Multi-line summary first line
     "PLR0913", # Too many arguments
     "Q000", # Single quotes found but double quotes preferred
+    "COM812",
+    "ISC001",
+    "D206",
+    "W191"
 ]
-ignore-init-module-imports = true
 # preview = true
 show-fixes = true
 src = ["src", ]
 
 [tool.ruff.format]
-quote-style = "single"
+quote-style = "double"
 indent-style = "tab"
 docstring-code-format = true
 docstring-code-line-length = 30
