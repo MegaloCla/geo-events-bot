@@ -13,12 +13,12 @@ URL = "http://webservices.ingv.it/fdsnws/event/1/query?format=geojson"
 
 
 class Poller:
-    def __init__(self, bot: TelegramBotObserver):
-        self.bot = bot
+    def __init__(self, token, chat_id):
+        self.bot = TelegramBotObserver(token, chat_id)
         self.subject = EventSubject()
         self._cache = EventCache()
 
-        self.subject.add_observer(bot)
+        self.subject.add_observer(self.bot)
 
     async def start_polling(self, polling_interval=2, min_magnitude=2):
         logger.info("Start polling INGV events data...")
@@ -40,7 +40,7 @@ class Poller:
                     logger.info("New events detected: %s", new_events)
                     for event in new_events:
                         message = (
-                            f"New earthquake detected: \n{format_event_message(event)}"
+                            f"New earthquake detected!\n{format_event_message(event)}"
                         )
                         await self.subject.notify_observers(message)
                 else:

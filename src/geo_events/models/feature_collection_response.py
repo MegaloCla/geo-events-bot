@@ -42,9 +42,12 @@ def format_event_message(feature: Feature) -> str:
     magnitude = feature.properties.mag
     coordinates = feature.geometry.coordinates
     place = feature.properties.place
-    output_lines.append(
-        f"\n- Event ID: {event_id}\n- Event Time: {event_time}\n- Magnitude: {magnitude}\n- Place: {place}\n- "
-        f"Coordinates: {coordinates}"
-    )
+
+    output_lines.append("\n🌟 **Event Details** 🌟\n")
+    output_lines.append(f"📅 **Event ID:** {event_id}\n")
+    output_lines.append(f"🕒 **Event Time:**\n{event_time}\n")
+    output_lines.append(f"📏 **Magnitude:** {magnitude}\n")
+    output_lines.append(f"📍 **Place:** {place}\n")
+    output_lines.append(f"🌐 **Coordinates:**\n{coordinates}\n")
 
     return "".join(output_lines)
