@@ -8,7 +8,7 @@ POETRY := $(shell command -v poetry 2> /dev/null)
 .DEFAULT_GOAL := help
 
 .PHONY: all
-all: install lint test
+all: install lint tests
 
 .PHONY: help
 help:
@@ -27,7 +27,6 @@ help:
 install: $(INSTALL_STAMP)
 $(INSTALL_STAMP): pyproject.toml
 	@if [ -z $(POETRY) ]; then echo "Poetry could not be found. See https://python-poetry.org/docs/"; exit 2; fi
-	$(POETRY) run pip install --upgrade pip setuptools
 	$(POETRY) install --with dev,test
 	touch $(INSTALL_STAMP)
 
@@ -49,7 +48,7 @@ tests: $(INSTALL_STAMP)
 	$(POETRY) run pytest $(TESTS)
 
 .PHONY: build
-build: lint test
+build: lint tests
 	$(POETRY) build
 
 .PHONY: clean
