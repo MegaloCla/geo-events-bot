@@ -15,6 +15,9 @@ packages = [
 python = "^3.12"
 requests = "^2.32.3"
 pydantic = "^2.8.2"
+cachetools = "^5.4.0"
+python-telegram-bot = "^21.4"
+diskcache = "^5.6.3"
 
 
 [tool.poetry.group.test.dependencies]
@@ -108,7 +111,11 @@ lint.ignore = [
     "ISC001",
     "D206",
     "W191",
-    "FA100"
+    "FA100",
+    "ANN001",
+    "ANN101",
+    "ANN204",
+    "ANN201"
 ]
 # preview = true
 show-fixes = true
@@ -116,7 +123,7 @@ src = ["src", ]
 
 [tool.ruff.format]
 quote-style = "double"
-indent-style = "tab"
+indent-style = "space"
 docstring-code-format = true
 docstring-code-line-length = 30
 
@@ -130,8 +137,10 @@ omit = [
 [tool.mypy]
 python_version = "3.12"
 ignore_missing_imports = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
 warn_unused_ignores = true
 warn_redundant_casts = true
 warn_no_return = true
