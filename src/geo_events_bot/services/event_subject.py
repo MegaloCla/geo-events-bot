@@ -1,7 +1,7 @@
 import asyncio
 from typing import List
 
-from geo_events.models.observer import Observer
+from geo_events_bot.models.observer import Observer
 
 
 class EventSubject:

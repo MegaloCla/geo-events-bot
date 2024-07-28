@@ -1,7 +1,7 @@
 import asyncio
 
-from geo_events.controllers.event_poller import Poller
-from geo_events.utils.env_var import get_env_variable
+from geo_events_bot.controllers.event_poller import Poller
+from geo_events_bot.utils.env_var import get_env_variable
 
 if __name__ == "__main__":
     TOKEN = get_env_variable("TELEGRAM_TOKEN")

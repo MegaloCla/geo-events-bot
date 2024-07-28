@@ -1,8 +1,8 @@
 from telegram import Bot
 from telegram.error import TelegramError
 
-from geo_events.models.observer import Observer
-from geo_events.utils.logger import Logger
+from geo_events_bot.models.observer import Observer
+from geo_events_bot.utils.logger import Logger
 
 logger = Logger().get_logger()
 

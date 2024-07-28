@@ -1,11 +1,11 @@
 import asyncio
 
-from geo_events.models.feature_collection_response import format_event_message
-from geo_events.services.event_cache import EventCache
-from geo_events.services.event_subject import EventSubject
-from geo_events.services.ingv_api import get_earthquake_data, json_to_model
-from geo_events.services.telegram_bot import TelegramBotObserver
-from geo_events.utils.logger import Logger
+from geo_events_bot.models.feature_collection_response import format_event_message
+from geo_events_bot.services.event_cache import EventCache
+from geo_events_bot.services.event_subject import EventSubject
+from geo_events_bot.services.ingv_api import get_earthquake_data, json_to_model
+from geo_events_bot.services.telegram_bot import TelegramBotObserver
+from geo_events_bot.utils.logger import Logger
 
 logger = Logger(__name__).get_logger()
 

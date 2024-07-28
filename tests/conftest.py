@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 
-from geo_events.models.observer import Observer
+from geo_events_bot.models.observer import Observer
 
 
 class TelegramBotObserverMock(Observer):

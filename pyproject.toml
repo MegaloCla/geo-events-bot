@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "geo-events"
+name = "geo-events-bot"
 version = "0.1.0"
 description = ""
 authors = ["MegaloCla <pivaclaudio23@gmail.com>"]
@@ -8,7 +8,7 @@ license = "GPL3"
 include = ["LICENSE"]
 
 packages = [
-    { include = "geo_events", from = "src" },
+    { include = "geo_events_bot", from = "src" },
 ]
 
 [tool.poetry.dependencies]
