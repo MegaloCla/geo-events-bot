@@ -3,8 +3,8 @@ from typing import Union
 import requests
 from pydantic import ValidationError
 
-from geo_events.models.feature_collection_response import FeatureCollection
-from geo_events.utils.logger import Logger
+from geo_events_bot.models.feature_collection_response import FeatureCollection
+from geo_events_bot.utils.logger import Logger
 
 logger = Logger(__name__).get_logger()
 

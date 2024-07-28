@@ -1,6 +1,6 @@
 import asyncio
 
-from geo_events.services.event_subject import EventSubject
+from geo_events_bot.services.event_subject import EventSubject
 
 
 def test_event_subject(telegram_observer_mock):

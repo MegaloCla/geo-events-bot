@@ -2,7 +2,7 @@ from typing import List
 
 import diskcache as dc
 
-from geo_events.models.feature_collection_response import Feature
+from geo_events_bot.models.feature_collection_response import Feature
 
 
 class EventCache:

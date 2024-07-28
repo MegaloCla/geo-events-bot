@@ -1,7 +1,7 @@
 import os
 import sys
 
-from geo_events.utils.logger import Logger
+from geo_events_bot.utils.logger import Logger
 
 logger = Logger(__name__).get_logger()
 
