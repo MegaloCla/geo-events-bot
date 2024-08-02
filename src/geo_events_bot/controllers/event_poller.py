@@ -24,7 +24,7 @@ class Poller:
 
         self.subject.add_observer(self.bot)
 
-    async def start_polling(self, polling_interval=3, min_magnitude=2.5):
+    async def start_polling(self, polling_interval=3, min_magnitude=2):
         logger.info("Start polling INGV events data...")
 
         try:
@@ -56,7 +56,7 @@ def _filter_warning_events(
 ) -> List[Feature]:
     return list(
         filter(
-            lambda geo_event: geo_event.properties.mag > min_magnitude,
+            lambda geo_event: geo_event.properties.mag >= min_magnitude,
             features,
         )
     )
