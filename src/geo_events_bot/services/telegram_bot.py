@@ -1,4 +1,5 @@
 from telegram import Bot
+from telegram.constants import ParseMode
 from telegram.error import TelegramError
 
 from geo_events_bot.models.observer import Observer
@@ -14,6 +15,8 @@ class TelegramBotObserver(Observer):
 
     async def send_message(self, message: str):
         try:
-            await self.bot.send_message(chat_id=self.chat_id, text=message)
+            await self.bot.send_message(
+                chat_id=self.chat_id, text=message, parse_mode=ParseMode.MARKDOWN
+            )
         except TelegramError as e:
             logger.error("Error sending message: %s", e, exc_info=True)  # noqa: G201

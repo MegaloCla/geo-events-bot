@@ -1,6 +1,10 @@
 import asyncio
+from typing import List
 
-from geo_events_bot.models.feature_collection_response import format_event_message
+from geo_events_bot.models.feature_collection_response import (
+    Feature,
+    format_event_message,
+)
 from geo_events_bot.services.event_cache import EventCache
 from geo_events_bot.services.event_subject import EventSubject
 from geo_events_bot.services.ingv_api import get_earthquake_data, json_to_model
@@ -20,7 +24,7 @@ class Poller:
 
         self.subject.add_observer(self.bot)
 
-    async def start_polling(self, polling_interval=2, min_magnitude=2):
+    async def start_polling(self, polling_interval=3, min_magnitude=2.5):
         logger.info("Start polling INGV events data...")
 
         try:
@@ -28,24 +32,31 @@ class Poller:
                 json_events = get_earthquake_data(URL)
                 data = json_to_model(json_events)
 
-                warning_events = list(
-                    filter(
-                        lambda geo_event: geo_event.properties.mag > min_magnitude,
-                        data.features,  # type: ignore  # noqa: PGH003
+                if data is not None:
+                    warning_events = _filter_warning_events(
+                        data.features, min_magnitude
                     )
-                )
 
-                new_events = self._cache.get_new_events(warning_events)
-                if new_events:
-                    logger.info("New events detected: %s", new_events)
-                    for event in new_events:
-                        message = (
-                            f"New earthquake detected!\n{format_event_message(event)}"
-                        )
-                        await self.subject.notify_observers(message)
-                else:
-                    logger.info("No new events detected.")
+                    new_events_obtained = self._cache.get_new_events(warning_events)
+                    if new_events_obtained:
+                        logger.info("New events detected: %s", new_events_obtained)
+                        for event in new_events_obtained:
+                            message = f"🚨 **New earthquake detected!** 🚨\n{format_event_message(event)}"
+                            await self.subject.notify_observers(message)
+                    else:
+                        logger.info("No new events detected.")
 
-                await asyncio.sleep(polling_interval)
+                    await asyncio.sleep(polling_interval)
         finally:
             self._cache.close()
+
+
+def _filter_warning_events(
+    features: List[Feature], min_magnitude: float
+) -> List[Feature]:
+    return list(
+        filter(
+            lambda geo_event: geo_event.properties.mag > min_magnitude,
+            features,
+        )
+    )
