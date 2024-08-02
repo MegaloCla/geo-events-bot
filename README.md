@@ -26,6 +26,10 @@ information about earthquakes and send it to the bot users.
 - 🗺️ Get geographical coordinates of earthquakes
 - ⚠️ Receive near real-time updates (updates depend on the INGV API refresh rate)
 
+The default thresholds set are:
+- Minimum magnitude reported = 2
+- Polling data interval = 3 seconds
+
 ## Prerequisites
 
 Make sure you have the following software installed before proceeding with the installation:
