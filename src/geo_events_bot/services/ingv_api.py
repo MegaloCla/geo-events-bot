@@ -9,7 +9,7 @@ from geo_events_bot.utils.logger import Logger
 logger = Logger(__name__).get_logger()
 
 
-def get_earthquake_data(url):
+def _get_earthquake_data(url) -> Union[dict, None]:
     try:
         response = requests.get(url, timeout=120)
         response.raise_for_status()
@@ -21,9 +21,14 @@ def get_earthquake_data(url):
         return None
 
 
-def json_to_model(data) -> Union[FeatureCollection, None]:
+def _json_to_model(data) -> Union[FeatureCollection, None]:
     try:
         return FeatureCollection(**data)
     except ValidationError:
         logger.warning("Different kind of Event caught: %s", data, exc_info=True)
         return None
+
+
+def get_geo_events(url: str) -> Union[FeatureCollection, None]:
+    json_events = _get_earthquake_data(url)
+    return _json_to_model(json_events)

@@ -23,6 +23,7 @@ diskcache = "^5.6.3"
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.1"
 pytest-cov = "^5.0.0"
+pytest-asyncio = "^0.23.8"
 
 
 [tool.poetry.group.dev.dependencies]
