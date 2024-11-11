@@ -28,7 +28,7 @@ information about earthquakes and send it to the bot users.
 
 The default thresholds set are:
 - Minimum magnitude reported = 2
-- Polling data interval = 3 seconds
+- Polling data interval = 5 seconds
 
 ## Prerequisites
 

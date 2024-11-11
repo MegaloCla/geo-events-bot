@@ -9,4 +9,4 @@ if __name__ == "__main__":
 
     poller = Poller(token=TOKEN, chat_id=CHAT_ID)
 
-    asyncio.run(poller.start_polling(3))
+    asyncio.run(poller.start_polling(5))

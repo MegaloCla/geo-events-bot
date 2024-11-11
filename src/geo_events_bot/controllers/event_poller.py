@@ -24,7 +24,7 @@ class Poller:
 
         self.subject.add_observer(self.bot)
 
-    async def start_polling(self, polling_interval=3, min_magnitude=2):
+    async def start_polling(self, polling_interval, min_magnitude=2):
         logger.info("Start polling INGV events data...")
         try:
             while True:
@@ -38,6 +38,7 @@ class Poller:
 
         if data is not None:
             warning_events = _filter_warning_events(data.features, min_magnitude)
+            warning_events.reverse()
 
             await self._process_warning_events(warning_events)
         else:
@@ -49,7 +50,7 @@ class Poller:
             logger.info("New events detected: %s", new_events_obtained)
             for event in new_events_obtained:
                 message = (
-                    f"🚨 **New earthquake detected!** 🚨\n{format_event_message(event)}"
+                    f"🚨 *New earthquake detected!* 🚨\n{format_event_message(event)}"
                 )
                 await self.subject.notify_observers(message)
         else:

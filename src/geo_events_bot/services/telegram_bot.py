@@ -16,7 +16,11 @@ class TelegramBotObserver(Observer):
     async def send_message(self, message: str):
         try:
             await self.bot.send_message(
-                chat_id=self.chat_id, text=message, parse_mode=ParseMode.MARKDOWN
+                chat_id=self.chat_id,
+                text=message,
+                parse_mode=ParseMode.MARKDOWN,
+                read_timeout=15,
+                write_timeout=15,
             )
         except TelegramError as e:
             logger.error("Error sending message: %s", e, exc_info=True)  # noqa: G201
