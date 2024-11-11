@@ -1,7 +1,6 @@
 from typing import Union
 
 import requests
-from pydantic import ValidationError
 
 from geo_events_bot.models.feature_collection_response import FeatureCollection
 from geo_events_bot.utils.logger import Logger
@@ -22,13 +21,13 @@ def _get_earthquake_data(url) -> Union[dict, None]:
 
 
 def _json_to_model(data) -> Union[FeatureCollection, None]:
-    try:
-        return FeatureCollection(**data)
-    except ValidationError:
-        logger.warning("Different kind of Event caught: %s", data, exc_info=True)
-        return None
+    return FeatureCollection(**data)
 
 
 def get_geo_events(url: str) -> Union[FeatureCollection, None]:
     json_events = _get_earthquake_data(url)
-    return _json_to_model(json_events)
+    try:
+        return _json_to_model(json_events)
+    except Exception as err:  # noqa: BLE001
+        logger.warning("Error in parsing data: %s", err)
+        return None

@@ -37,17 +37,14 @@ class FeatureCollection(BaseModel):
 def format_event_message(feature: Feature) -> str:
     output_lines = []
 
-    event_id = feature.properties.event_id
     event_time = feature.properties.time.strftime("%Y-%m-%d %H:%M:%S")
     magnitude = feature.properties.mag
-    coordinates = feature.geometry.coordinates
+    coordinates = f"Lat: {feature.geometry.coordinates[1]}, Lon: {feature.geometry.coordinates[0]}"
     place = feature.properties.place
 
-    output_lines.append("\n🌟 **Event Details** 🌟\n")
-    output_lines.append(f"📅 **Event ID:** {event_id}\n")
-    output_lines.append(f"🕒 **Event Time:**\n{event_time}\n")
-    output_lines.append(f"📏 **Magnitude:** {magnitude}\n")
-    output_lines.append(f"📍 **Place:** {place}\n")
-    output_lines.append(f"🌐 **Coordinates:**\n{coordinates}\n")
+    output_lines.append(f"\n**📏 **Magnitude:** *{magnitude}*\n\n")
+    output_lines.append(f"\n**📌 **Location:** \n**{place}**\n")
+    output_lines.append(f"\n**📅 Date & Time:** \n{event_time}\n\n")
+    output_lines.append(f"\n**🌐 Coordinates:** \n{coordinates}\n")
 
     return "".join(output_lines)
