@@ -18,6 +18,7 @@ pydantic = "^2.8.2"
 cachetools = "^5.4.0"
 python-telegram-bot = "^21.4"
 diskcache = "^5.6.3"
+pytz = "^2024.2"
 
 
 [tool.poetry.group.test.dependencies]
