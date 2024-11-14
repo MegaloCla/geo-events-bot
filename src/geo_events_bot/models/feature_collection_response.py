@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List
 
+import pytz
 from pydantic import BaseModel, Field
 
 
@@ -37,7 +38,12 @@ class FeatureCollection(BaseModel):
 def format_event_message(feature: Feature) -> str:
     output_lines = []
 
-    event_time = feature.properties.time.strftime("%Y-%m-%d %H:%M:%S")
+    rome_tz = pytz.timezone("Europe/Rome")
+    event_time = (
+        feature.properties.time.replace(tzinfo=pytz.utc)
+        .astimezone(rome_tz)
+        .strftime("%Y-%m-%d %H:%M:%S")
+    )
     magnitude = feature.properties.mag
     coordinates = f"Lat: {feature.geometry.coordinates[1]}, Lon: {feature.geometry.coordinates[0]}"
     place = feature.properties.place
