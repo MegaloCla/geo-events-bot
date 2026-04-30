@@ -4,6 +4,8 @@ from typing import List
 import pytz
 from pydantic import BaseModel, Field
 
+_ROME_TZ = pytz.timezone("Europe/Rome")
+
 
 class Geometry(BaseModel):
     type: str
@@ -38,19 +40,19 @@ class FeatureCollection(BaseModel):
 def format_event_message(feature: Feature) -> str:
     output_lines = []
 
-    rome_tz = pytz.timezone("Europe/Rome")
-    event_time = (
-        feature.properties.time.replace(tzinfo=pytz.utc)
-        .astimezone(rome_tz)
-        .strftime("%Y-%m-%d %H:%M:%S")
-    )
+    event_time_raw = feature.properties.time
+    if event_time_raw.tzinfo is None:
+        event_time_utc = event_time_raw.replace(tzinfo=pytz.utc)
+    else:
+        event_time_utc = event_time_raw.astimezone(pytz.utc)
+    event_time = event_time_utc.astimezone(_ROME_TZ).strftime("%Y-%m-%d %H:%M:%S")
     magnitude = feature.properties.mag
     coordinates = f"Lat: {feature.geometry.coordinates[1]}, Lon: {feature.geometry.coordinates[0]}"
     place = feature.properties.place
 
-    output_lines.append(f"\n**📏 **Magnitude:** *{magnitude}*\n\n")
-    output_lines.append(f"\n**📌 **Location:** \n**{place}**\n")
-    output_lines.append(f"\n**📅 Date & Time:** \n{event_time}\n\n")
-    output_lines.append(f"\n**🌐 Coordinates:** \n{coordinates}\n")
+    output_lines.append(f"\n📏 **Magnitude:** *{magnitude}*\n\n")
+    output_lines.append(f"\n📌 **Location:** \n**{place}**\n")
+    output_lines.append(f"\n📅 **Date & Time:** \n{event_time}\n\n")
+    output_lines.append(f"\n🌐 **Coordinates:** \n{coordinates}\n")
 
     return "".join(output_lines)

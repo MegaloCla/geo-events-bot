@@ -6,7 +6,11 @@ from geo_events_bot.models.feature_collection_response import Feature
 
 
 class EventCache:
-    def __init__(self, cache_dir="/tmp/event-cache-dir", size_limit=1e6) -> None:  # noqa: S108
+    def __init__(
+        self,
+        cache_dir: str = "/tmp/event-cache-dir",  # noqa: S108
+        size_limit: float = 1e6,
+    ) -> None:
         self.cache = dc.Cache(directory=cache_dir, size_limit=size_limit)
 
     def add_event(self, feature: Feature) -> bool:
@@ -16,7 +20,7 @@ class EventCache:
             return True
         return False
 
-    def get_new_events(self, features: List[Feature]) -> List:
+    def get_new_events(self, features: List[Feature]) -> List[Feature]:
         return [feature for feature in features if self.add_event(feature)]
 
     def close(self) -> None:

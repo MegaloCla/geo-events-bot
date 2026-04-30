@@ -21,6 +21,8 @@ def _get_earthquake_data(url) -> Union[dict, None]:
 
 
 def _json_to_model(data) -> Union[FeatureCollection, None]:
+    if data is None:
+        return None
     return FeatureCollection(**data)
 
 

@@ -1,5 +1,3 @@
-from unittest.mock import AsyncMock
-
 import pytest
 
 
@@ -27,10 +25,32 @@ def test_remove_observer_not_present(subject, observer):
 
 @pytest.mark.asyncio()
 async def test_notify_observers(subject, observer):
-    observer.send_message = AsyncMock()
     subject.add_observer(observer)
 
     message = "Test message"
     await subject.notify_observers(message)
 
-    observer.send_message.assert_called_once_with(message)
+    observer.send_message.assert_called_once_with(message, None)
+
+
+@pytest.mark.asyncio()
+async def test_notify_observers_with_photo(subject, observer):
+    subject.add_observer(observer)
+
+    message = "Test message"
+    photo_bytes = b"fake_image_data"
+    await subject.notify_observers(message, photo_bytes)
+
+    observer.send_photo.assert_called_once_with(photo_bytes, message, None)
+    observer.send_message.assert_not_called()
+
+
+@pytest.mark.asyncio()
+async def test_notify_observers_with_reply_markup(subject, observer):
+    subject.add_observer(observer)
+
+    message = "Test message"
+    reply_markup = "fake_markup"
+    await subject.notify_observers(message, reply_markup=reply_markup)
+
+    observer.send_message.assert_called_once_with(message, reply_markup)

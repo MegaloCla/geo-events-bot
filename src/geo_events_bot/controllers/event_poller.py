@@ -1,6 +1,8 @@
 import asyncio
 from typing import List
 
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+
 from geo_events_bot.models.feature_collection_response import (
     Feature,
     format_event_message,
@@ -8,6 +10,7 @@ from geo_events_bot.models.feature_collection_response import (
 from geo_events_bot.services.event_cache import EventCache
 from geo_events_bot.services.event_subject import EventSubject
 from geo_events_bot.services.ingv_api import get_geo_events
+from geo_events_bot.services.map_generator import generate_event_map
 from geo_events_bot.services.telegram_bot import TelegramBotObserver
 from geo_events_bot.utils.logger import Logger
 
@@ -17,7 +20,7 @@ URL = "http://webservices.ingv.it/fdsnws/event/1/query?format=geojson"
 
 
 class Poller:
-    def __init__(self, token, chat_id):
+    def __init__(self, token: str, chat_id: str):
         self.bot = TelegramBotObserver(token, chat_id)
         self.subject = EventSubject()
         self._cache = EventCache()
@@ -34,7 +37,7 @@ class Poller:
             self._cache.close()
 
     async def _process_events_fetched(self, min_magnitude) -> None:
-        data = get_geo_events(URL)
+        data = await asyncio.to_thread(get_geo_events, URL)
 
         if data is not None:
             warning_events = _filter_warning_events(data.features, min_magnitude)
@@ -52,9 +55,19 @@ class Poller:
                 message = (
                     f"🚨 *New earthquake detected!* 🚨\n{format_event_message(event)}"
                 )
-                await self.subject.notify_observers(message)
+                photo_bytes = await asyncio.to_thread(generate_event_map, event)
+                reply_markup = _build_map_keyboard(event)
+                await self.subject.notify_observers(message, photo_bytes, reply_markup)
         else:
             logger.info("No new events detected.")
+
+
+def _build_map_keyboard(feature: Feature) -> InlineKeyboardMarkup:
+    lat = feature.geometry.coordinates[1]
+    lon = feature.geometry.coordinates[0]
+    maps_url = f"https://www.google.com/maps?q={lat},{lon}"
+    keyboard = [[InlineKeyboardButton("📍 OpenStreetMap", url=maps_url)]]
+    return InlineKeyboardMarkup(keyboard)
 
 
 def _filter_warning_events(

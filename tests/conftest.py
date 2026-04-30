@@ -15,7 +15,10 @@ def subject():
 
 @pytest.fixture()
 def observer():
-    return MagicMock(Observer)
+    mock = MagicMock(Observer)
+    mock.send_message = AsyncMock()
+    mock.send_photo = AsyncMock()
+    return mock
 
 
 @pytest.fixture()
