@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from pydantic import BaseModel, Field
 
-if TYPE_CHECKING:
-    from geo_events_bot.models.location_filter import LocationFilter
+from geo_events_bot.models.location_filter import LocationFilter
 
 
 class Settings(BaseModel):

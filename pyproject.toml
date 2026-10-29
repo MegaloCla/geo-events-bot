@@ -131,6 +131,9 @@ indent-style = "space"
 docstring-code-format = true
 docstring-code-line-length = 30
 
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
+
 [tool.coverage.run]
 branch = true
 relative_files = true
