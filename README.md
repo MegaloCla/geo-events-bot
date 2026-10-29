@@ -96,3 +96,31 @@ Contributions are welcome! Feel free to fork the project, create a new branch, a
 
 ## License
 This project is licensed under the GNU General Public License v3.0. See the LICENSE file for details.
+
+## Earthquakes near a city
+
+The filter is configured directly in Telegram using a city name and a radius in km.
+
+1. Enable inline queries for your bot with BotFather's `/setinline` command.
+   Suggested placeholder: `Città e raggio in km, ad esempio Roma 50`.
+2. Send `/zona` to your bot and tap **Cerca città e raggio**, or type
+   `@your_bot Roma 50` directly in Telegram's message field.
+3. Suggestions appear while typing (at least three characters). Select the city,
+   checking its region and country, then tap **Attiva filtro**.
+
+The radius defaults to 100 km if omitted and must be a positive finite number.
+City search is provided by [Open-Meteo / GeoNames](https://open-meteo.com/en/docs/geocoding-api).
+The configured private chat owner, or an administrator of the configured group/channel,
+can activate or disable the filter. Settings apply to `CHAT_TELEGRAM_ID` and are saved
+as `location_filter.json` in the event cache directory. They survive process restarts
+while that directory is retained and are independent of event cache eviction.
+Use `/zona` → **Tutte le zone** to remove the filter.
+
+Both the minimum magnitude and the geographic radius apply. Distances are approximate
+surface distances to the epicenter, shown in messages and image cards. Coordinates
+are resolved internally; users enter only the city and radius. Already delivered
+events remain deduplicated when the filter changes.
+
+Map cards include local time (Europe/Rome), magnitude, depth when available and a
+clear epicenter marker. Tiles use a seven-day local cache in the system temporary
+directory, an application User-Agent and visible OpenStreetMap attribution.

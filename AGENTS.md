@@ -15,23 +15,29 @@ Telegram bot polling INGV (Italian seismic agency) APIs for earthquake updates. 
 | Single test | `poetry run pytest tests/<file>.py -k <name>` |
 | Clean | `make clean` (git clean -Xdf) |
 
-CI (`.github/workflows/actions.yml`) runs `ruff check`, `ruff format`, then `pytest` on push/PR to `master`. No mypy in CI.
+CI (`.github/workflows/actions.yml`) runs `ruff check`, `ruff format --check`, `mypy`, then `pytest` on push/PR to `master`.
 
 ## Architecture
 
 ```
 src/geo_events_bot/
-  __main__.py          # Entry point: creates Poller, calls start_polling(interval=5)
+  __main__.py          # Entry point: starts Telegram handlers and INGV polling
   controllers/
     event_poller.py    # Poller - main loop, coordinates services
+    location_controller.py  # Telegram handlers for city search and filter selection
   services/
     ingv_api.py        # INGV API client
     telegram_bot.py    # Telegram messaging via python-telegram-bot
     event_cache.py     # diskcache-based dedup of seen events
     event_subject.py   # Observer pattern subject
-    map_generator.py   # Generates static map PNG with epicenter marker + overlay
+    map_generator.py   # Generates a PNG event card with map and epicenter marker
+    city_search.py     # City name suggestions via Open-Meteo geocoding
+    settings_store.py  # Load/save location preferences as JSON
   models/
     observer.py        # Observer interface (send_message, send_photo)
+    location_filter.py # City, radius and distance calculations
+    settings.py        # Pydantic application settings and active location filter
+    city.py            # Pydantic geocoding result model
     feature_collection_response.py  # Pydantic model for INGV GeoJSON
   utils/
     env_var.py         # Reads TELEGRAM_TOKEN, CHAT_TELEGRAM_ID from env
@@ -47,7 +53,9 @@ Entry point requires `TELEGRAM_TOKEN` and `CHAT_TELEGRAM_ID` env vars. Run: `poe
 - **pytest** runs with `--doctest-modules` and coverage (HTML + XML to `tests/reports/`).
 - **pre-commit** runs ruff + mypy + yaml/trailing-whitespace checks.
 - Package is declared as `{ include = "geo_events_bot", from = "src" }` — imports resolve as `geo_events_bot.*` not `src.*`.
-- **staticmap** + **Pillow** used for map generation. `generate_event_map()` produces PNG bytes with red marker + text overlay.
+- **staticmap** + **Pillow** used for map generation. `generate_event_map()` produces PNG event cards with a red epicenter marker, magnitude, local time, depth and optional distance.
+- `/zona` opens city/radius settings. Enable inline queries with BotFather's `/setinline`; search with `@bot Roma 50`. Settings apply to `CHAT_TELEGRAM_ID`, with owner/admin authorization.
+- Location preferences are saved as `location_filter.json` in the event cache directory, separately from evictable event entries. Map tiles are cached for seven days in the system temporary directory.
 
 ## Conventions
 
