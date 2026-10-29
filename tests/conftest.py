@@ -1,9 +1,17 @@
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from geo_events_bot.controllers import event_poller
 from geo_events_bot.controllers.event_poller import Poller
+from geo_events_bot.models.feature_collection_response import (
+    Feature,
+    Geometry,
+    Properties,
+)
 from geo_events_bot.models.observer import Observer
+from geo_events_bot.models.settings import Settings
 from geo_events_bot.services.event_cache import EventCache
 from geo_events_bot.services.event_subject import EventSubject
 
@@ -22,12 +30,41 @@ def observer():
 
 
 @pytest.fixture()
-def poller():
+def feature():
+    return Feature(
+        type="Feature",
+        properties=Properties(
+            eventId=1,
+            originId=1,
+            time=datetime(2026, 1, 1, tzinfo=UTC),
+            author="INGV",
+            magType="ML",
+            mag=3.0,
+            magAuthor="INGV",
+            type="earthquake",
+            place="Roma",
+            version=1,
+            geojson_creationTime=datetime(2026, 1, 1, tzinfo=UTC),
+        ),
+        geometry=Geometry(type="Point", coordinates=[12.5, 41.9, 10.0]),
+    )
+
+
+@pytest.fixture()
+def event_cache(tmp_path):
+    cache = EventCache(cache_dir=str(tmp_path / "events"))
+    yield cache
+    cache.close()
+
+
+@pytest.fixture()
+def poller(monkeypatch, event_cache, observer):
+    observer.bot = AsyncMock()
     token = "dummy_token"  # noqa: S105
     chat_id = "dummy_chat_id"
-    poller_instance = Poller(token, chat_id)
-    poller_instance._cache = MagicMock(EventCache)  # noqa: SLF001
-    poller_instance.subject = MagicMock(EventSubject)
-    poller_instance.subject.add_observer = MagicMock()
-    poller_instance.subject.notify_observers = AsyncMock()
-    return poller_instance
+    monkeypatch.setattr(event_poller, "EventCache", lambda: event_cache)
+    monkeypatch.setattr(event_poller, "TelegramBotObserver", lambda *_: observer)
+    monkeypatch.setattr(
+        event_poller, "generate_event_map", MagicMock(return_value=b"map")
+    )
+    return Poller(Settings(telegram_token=token, chat_id=chat_id))

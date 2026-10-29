@@ -2,12 +2,8 @@ from __future__ import annotations
 
 from telegram import Bot, InlineKeyboardMarkup
 from telegram.constants import ParseMode
-from telegram.error import TelegramError
 
 from geo_events_bot.models.observer import Observer
-from geo_events_bot.utils.logger import Logger
-
-logger = Logger().get_logger()
 
 
 class TelegramBotObserver(Observer):
@@ -18,17 +14,14 @@ class TelegramBotObserver(Observer):
     async def send_message(
         self, message: str, reply_markup: InlineKeyboardMarkup | None = None
     ) -> None:
-        try:
-            await self.bot.send_message(
-                chat_id=self.chat_id,
-                text=message,
-                parse_mode=ParseMode.MARKDOWN,
-                reply_markup=reply_markup,
-                read_timeout=15,
-                write_timeout=15,
-            )
-        except TelegramError as e:
-            logger.error("Error sending message: %s", e, exc_info=True)  # noqa: G201
+        await self.bot.send_message(
+            chat_id=self.chat_id,
+            text=message,
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=reply_markup,
+            read_timeout=15,
+            write_timeout=15,
+        )
 
     async def send_photo(
         self,
@@ -36,15 +29,12 @@ class TelegramBotObserver(Observer):
         caption: str,
         reply_markup: InlineKeyboardMarkup | None = None,
     ) -> None:
-        try:
-            await self.bot.send_photo(
-                chat_id=self.chat_id,
-                photo=photo_bytes,
-                caption=caption,
-                parse_mode=ParseMode.MARKDOWN,
-                reply_markup=reply_markup,
-                read_timeout=15,
-                write_timeout=15,
-            )
-        except TelegramError as e:
-            logger.error("Error sending photo: %s", e, exc_info=True)  # noqa: G201
+        await self.bot.send_photo(
+            chat_id=self.chat_id,
+            photo=photo_bytes,
+            caption=caption,
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=reply_markup,
+            read_timeout=15,
+            write_timeout=15,
+        )

@@ -3,6 +3,8 @@ from __future__ import annotations
 import asyncio
 from typing import TYPE_CHECKING
 
+from telegram.error import TelegramError
+
 from geo_events_bot.utils.logger import Logger
 
 if TYPE_CHECKING:
@@ -30,7 +32,7 @@ class EventSubject:
         message: str,
         photo_bytes: bytes | None = None,
         reply_markup: InlineKeyboardMarkup | None = None,
-    ) -> None:
+    ) -> bool:
         tasks = []
         for observer in self._observers:
             if photo_bytes:
@@ -38,6 +40,11 @@ class EventSubject:
             else:
                 tasks.append(observer.send_message(message, reply_markup))
         results = await asyncio.gather(*tasks, return_exceptions=True)
+        success = bool(tasks)
         for result in results:
-            if isinstance(result, Exception):
+            if isinstance(result, TelegramError):
                 logger.error("Observer notification failed: %s", result)
+                success = False
+            elif isinstance(result, BaseException):
+                raise result
+        return success

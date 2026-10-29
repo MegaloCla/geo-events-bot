@@ -1,8 +1,11 @@
-from typing import List
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import diskcache as dc
 
-from geo_events_bot.models.feature_collection_response import Feature
+if TYPE_CHECKING:
+    from geo_events_bot.models.feature_collection_response import Feature
 
 
 class EventCache:
@@ -15,13 +18,19 @@ class EventCache:
 
     def add_event(self, feature: Feature) -> bool:
         event_id = feature.properties.event_id
-        if event_id not in self.cache:
-            self.cache.add(event_id, feature)
+        cached = self.cache.get(event_id)
+        if cached is None or feature.properties.version > cached.properties.version:
+            self.cache.set(event_id, feature)
             return True
         return False
 
-    def get_new_events(self, features: List[Feature]) -> List[Feature]:
-        return [feature for feature in features if self.add_event(feature)]
+    def get_new_events(self, features: list[Feature]) -> list[Feature]:
+        new_events = []
+        for feature in features:
+            cached = self.cache.get(feature.properties.event_id)
+            if cached is None or feature.properties.version > cached.properties.version:
+                new_events.append(feature)
+        return new_events
 
     def close(self) -> None:
         self.cache.close()

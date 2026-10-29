@@ -9,7 +9,7 @@ _ROME_TZ = pytz.timezone("Europe/Rome")
 
 class Geometry(BaseModel):
     type: str
-    coordinates: List[float]
+    coordinates: List[float] = Field(min_length=2, max_length=3)
 
 
 class Properties(BaseModel):

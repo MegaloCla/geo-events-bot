@@ -1,4 +1,7 @@
+import asyncio
+
 import pytest
+from telegram.error import TelegramError
 
 
 def test_add_observer(subject, observer):
@@ -54,3 +57,37 @@ async def test_notify_observers_with_reply_markup(subject, observer):
     await subject.notify_observers(message, reply_markup=reply_markup)
 
     observer.send_message.assert_called_once_with(message, reply_markup)
+
+
+@pytest.mark.asyncio()
+async def test_notification_failure_is_reported(subject, observer):
+    subject.add_observer(observer)
+    observer.send_message.side_effect = TelegramError("Unavailable")
+    assert await subject.notify_observers("message") is False  # noqa: S101
+
+
+@pytest.mark.asyncio()
+async def test_no_observers_is_not_a_success(subject):
+    assert await subject.notify_observers("message") is False  # noqa: S101
+
+
+@pytest.mark.asyncio()
+async def test_successful_delivery_is_reported(subject, observer):
+    subject.add_observer(observer)
+    assert await subject.notify_observers("message") is True  # noqa: S101
+
+
+@pytest.mark.asyncio()
+async def test_cancellation_propagates(subject, observer):
+    subject.add_observer(observer)
+    observer.send_message.side_effect = asyncio.CancelledError()
+    with pytest.raises(asyncio.CancelledError):
+        await subject.notify_observers("message")
+
+
+@pytest.mark.asyncio()
+async def test_unexpected_observer_error_propagates(subject, observer):
+    subject.add_observer(observer)
+    observer.send_message.side_effect = TypeError("Bug")
+    with pytest.raises(TypeError, match="Bug"):
+        await subject.notify_observers("message")
